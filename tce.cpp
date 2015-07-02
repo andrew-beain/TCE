@@ -16,12 +16,6 @@ typedef signed short i16;
 typedef unsigned int u32;
 typedef signed int i32;
 
-//Basic Register Definition
-typedef struct Register {
-	u8 HighByte;
-	u8 LowByte;
-} Register;
-
 
 //The status register, a special register outlined for special cases
 //You can read more about the status register 
@@ -31,7 +25,7 @@ typedef union SRegister {
 };
 
 //Registers are all just 16 bit numbers stored that we manipulate. Nothing scary here, I swear
-enum Registers: u16 {
+enum Register: u16 {
 	//Main Registers
 	AX,			// Primary 
 	BX,			// Base 
@@ -56,7 +50,54 @@ enum Registers: u16 {
 
 
 //We'll give this puppy 10K of memory. 
-u16 memory[0x10000] = {}, registers[12] = {};
+u16 memory[0x10000], registers[12] = {};
+
+enum opCodes { MOV, ADD, SUB, MUL, DIV, SHL, SHR, AND, OR, XOR, IFE, IFN, IFG, IFL };
+
+
+
+struct CPU
+{
+	//Execute the next operation
+	void exOp(opCodes o, u16 a, u16 b)
+	{
+		switch (o)
+		{
+		case MOV:
+			registers[a] = registers[b];
+			break;
+		case ADD:
+			registers[a] += registers[b];
+			break;
+		case SUB:
+			registers[a] -= registers[b];
+			break;
+		case MUL:
+			registers[a] *= registers[b];
+			break;
+		case DIV:
+			registers[a] /= registers[b];
+			break;
+		case SHL:
+			registers[a] <<= b;
+			break;
+		case SHR:
+			registers[a] >>= b;
+			break;
+		case AND:
+			registers[a] &= registers[b];
+			break;
+		case OR:
+			registers[a] |= registers[b];
+			break;
+		case XOR:
+			registers[a] ^= registers[b];
+			break;
+		default:
+			break;
+		}
+	}
+};
 
 int main(int argc, char* argv[])
 {
